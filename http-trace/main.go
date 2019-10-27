@@ -14,24 +14,12 @@ import (
 // Request defines a requests with performance metrics
 type Request struct {
 	*http.Request
-	Metrics map[string]string
-}
-
-var (
-	maxChan chan bool
-)
-
-func init() {
-	maxRequests := 100
-	maxChan = make(chan bool, maxRequests)
 }
 
 // NewRequest creates a new request with performance metrics under a specific context, that allows
 // to cancel or timeout the request.
 func NewRequest(method, url string, body io.Reader) (*Request, error) {
 	req, err := http.NewRequest(method, url, body)
-
-	// var connect, dns, tlsHandshake time.Time
 
 	trace := &httptrace.ClientTrace{
 		GetConn: func(hostPort string) {
@@ -87,12 +75,11 @@ func NewRequest(method, url string, body io.Reader) (*Request, error) {
 	}
 
 	req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
-
-	return &Request{req, nil}, err
+	return &Request{req}, err
 }
 
 func main() {
-	req, err := NewRequest(http.MethodGet, "https://marca.com", nil)
+	req, err := NewRequest(http.MethodGet, "https://example.com", nil)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 	}
@@ -104,7 +91,7 @@ func main() {
 		fmt.Printf("Error: %s\n", err)
 	}
 	bodyBytes, _ := ioutil.ReadAll(resp.Body)
-	fmt.Print(string(bodyBytes[:1000]))
+	fmt.Print(string(bodyBytes[:20]))
+	fmt.Println("\n-----------------")
 	defer resp.Body.Close()
-
 }
