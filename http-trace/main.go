@@ -90,8 +90,9 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 	}
+	defer resp.Body.Close()
 	bodyBytes, _ := ioutil.ReadAll(resp.Body)
 	fmt.Print(string(bodyBytes[:20]))
 	fmt.Println("\n-----------------")
-	defer resp.Body.Close()
+
 }
