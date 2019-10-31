@@ -83,6 +83,7 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 	}
+	req.Header.Add("Expect", "100-continue")
 	client := http.DefaultClient
 	fmt.Printf("Start connection - \n\tTime: %s\n", time.Now().String())
 	resp, err := client.Do(req.Request)
